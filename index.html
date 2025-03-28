@@ -1,0 +1,552 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Customer Care Performance Tool - ABC Corporation</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f5f7fa;
+        }
+        .container {
+            display: flex;
+            height: 100vh;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+        .chat-container {
+            flex: 2;
+            display: flex;
+            flex-direction: column;
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            margin-right: 20px;
+        }
+        .sidebar {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        .performance-panel, .customer-panel {
+            background-color: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        .header {
+            background-color: #3498db;
+            color: white;
+            padding: 15px;
+            border-top-left-radius: 10px;
+            border-top-right-radius: 10px;
+            font-weight: bold;
+            font-size: 1.2em;
+        }
+        .chat-window {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        .message {
+            padding: 10px 15px;
+            border-radius: 10px;
+            max-width: 80%;
+        }
+        .employee-message {
+            align-self: flex-end;
+            background-color: #3498db;
+            color: white;
+        }
+        .customer-message {
+            align-self: flex-start;
+            background-color: #f0f0f0;
+            color: #333;
+        }
+        .system-message {
+            align-self: center;
+            background-color: #f8f9fa;
+            color: #6c757d;
+            font-style: italic;
+            max-width: 90%;
+        }
+        .message-sender {
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        .chat-input {
+            display: flex;
+            padding: 15px;
+            border-top: 1px solid #e0e0e0;
+        }
+        #message-input {
+            flex: 1;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 1em;
+            margin-right: 10px;
+        }
+        #send-button {
+            padding: 12px 20px;
+            background-color: #3498db;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        #send-button:hover {
+            background-color: #2980b9;
+        }
+        .score-item {
+            margin-bottom: 15px;
+        }
+        .score-label {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 5px;
+        }
+        .score-value {
+            font-weight: bold;
+            font-size: 1.2em;
+        }
+        .progress-container {
+            height: 10px;
+            background-color: #f0f0f0;
+            border-radius: 5px;
+            overflow: hidden;
+        }
+        .progress-bar {
+            height: 100%;
+            background-color: #3498db;
+            transition: width 0.3s ease, background-color 0.3s ease;
+        }
+        .employee-stats {
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid #e0e0e0;
+        }
+        .stat-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+        }
+        .customer-info {
+            margin-bottom: 10px;
+        }
+        .customer-info-label {
+            font-weight: bold;
+            color: #7f8c8d;
+            margin-bottom: 3px;
+        }
+        .customer-info-value {
+            margin-bottom: 15px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="chat-container">
+            <div class="header">
+                Customer Chat - ABC Corporation
+            </div>
+            <div id="chat-window" class="chat-window">
+                <!-- Chat messages will be added here -->
+            </div>
+            <div class="chat-input">
+                <input type="text" id="message-input" placeholder="Type your message here...">
+                <button id="send-button">Send</button>
+            </div>
+        </div>
+        
+        <div class="sidebar">
+            <div class="performance-panel">
+                <h2>Performance Ratings</h2>
+                
+                <div class="score-item">
+                    <div class="score-label">
+                        <span>Customer Satisfaction</span>
+                        <span class="score-value" id="customer-satisfaction-score">3.0</span>
+                    </div>
+                    <div class="progress-container">
+                        <div class="progress-bar" id="customer-satisfaction-bar" style="width: 60%"></div>
+                    </div>
+                </div>
+                
+                <div class="score-item">
+                    <div class="score-label">
+                        <span>Handling Ability</span>
+                        <span class="score-value" id="handling-ability-score">3.0</span>
+                    </div>
+                    <div class="progress-container">
+                        <div class="progress-bar" id="handling-ability-bar" style="width: 60%"></div>
+                    </div>
+                </div>
+                
+                <div class="score-item">
+                    <div class="score-label">
+                        <span>Overall Score</span>
+                        <span class="score-value" id="overall-score">3.0</span>
+                    </div>
+                    <div class="progress-container">
+                        <div class="progress-bar" id="overall-score-bar" style="width: 60%"></div>
+                    </div>
+                </div>
+                
+                <div class="employee-stats">
+                    <h3>Employee Statistics</h3>
+                    
+                    <div class="stat-item">
+                        <span>Total Chats Today</span>
+                        <span>12</span>
+                    </div>
+                    
+                    <div class="stat-item">
+                        <span>Average Rating</span>
+                        <span>4.2</span>
+                    </div>
+                    
+                    <div class="stat-item">
+                        <span>Incentive Percentage</span>
+                        <span id="incentive-percentage">42%</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="customer-panel">
+                <h2>Customer Details</h2>
+                
+                <div class="customer-info">
+                    <div class="customer-info-label">Name</div>
+                    <div class="customer-info-value" id="customer-name">John Smith</div>
+                    
+                    <div class="customer-info-label">Email</div>
+                    <div class="customer-info-value" id="customer-email">john.smith@example.com</div>
+                    
+                    <div class="customer-info-label">Account Number</div>
+                    <div class="customer-info-value" id="customer-account">ACC-12345</div>
+                    
+                    <div class="customer-info-label">Current Issue</div>
+                    <div class="customer-info-value" id="customer-issue">Billing discrepancy on recent invoice</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Global variables
+let customerSatisfactionScore = 0;
+let handlingAbilityScore = 0;
+let overallScore = 0;
+let chatHistory = [];
+let customerInfo = {
+    name: "John Smith",
+    email: "john.smith@example.com",
+    accountNumber: "ACC-12345",
+    issue: "Billing discrepancy on recent invoice"
+};
+
+// Initialize the application when the document is loaded
+document.addEventListener('DOMContentLoaded', function() {
+    initializeChat();
+    updateScores(3, 3); // Start with neutral scores
+});
+
+// Initialize the chat interface
+function initializeChat() {
+    document.getElementById('send-button').addEventListener('click', sendMessage);
+    document.getElementById('message-input').addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') {
+            sendMessage();
+        }
+    });
+    
+    // Display customer information
+    document.getElementById('customer-name').textContent = customerInfo.name;
+    document.getElementById('customer-email').textContent = customerInfo.email;
+    document.getElementById('customer-account').textContent = customerInfo.accountNumber;
+    document.getElementById('customer-issue').textContent = customerInfo.issue;
+    
+    // Add initial system message
+    addMessageToChat("System", "Customer connected. Please assist them with their issue.", "system-message");
+    
+    // Add initial customer message
+    setTimeout(() => {
+        addMessageToChat("Customer", "Hello, I have a problem with my recent bill. The amount seems incorrect.", "customer-message");
+    }, 1000);
+}
+
+// Send a message from the employee
+function sendMessage() {
+    const messageInput = document.getElementById('message-input');
+    const message = messageInput.value.trim();
+    
+    if (message) {
+        // Add employee message to chat
+        addMessageToChat("Employee", message, "employee-message");
+        messageInput.value = '';
+        
+        // Analyze the conversation after employee message
+        analyzeConversation();
+        
+        // Simulate customer response after a short delay
+        setTimeout(() => {
+            simulateCustomerResponse();
+        }, 1500);
+    }
+}
+
+// Add a message to the chat window
+function addMessageToChat(sender, message, className) {
+    const chatWindow = document.getElementById('chat-window');
+    const messageElement = document.createElement('div');
+    messageElement.classList.add('message', className);
+    
+    const senderElement = document.createElement('div');
+    senderElement.classList.add('message-sender');
+    senderElement.textContent = sender;
+    
+    const contentElement = document.createElement('div');
+    contentElement.classList.add('message-content');
+    contentElement.textContent = message;
+    
+    messageElement.appendChild(senderElement);
+    messageElement.appendChild(contentElement);
+    chatWindow.appendChild(messageElement);
+    
+    // Add to chat history
+    chatHistory.push({
+        role: sender.toLowerCase(),
+        content: message
+    });
+    
+    // Scroll to the bottom of the chat window
+    chatWindow.scrollTop = chatWindow.scrollHeight;
+}
+
+// Simulate customer responses
+function simulateCustomerResponse() {
+    const customerResponses = [
+        "I'm still seeing the wrong amount on my bill. Can you please check again?",
+        "Thank you for looking into this. When will the correction be reflected?",
+        "I've been a customer for 5 years and never had this issue before.",
+        "I appreciate your help with this matter.",
+        "This is taking too long. I'm very frustrated with this service.",
+        "Can you explain how this happened in the first place?",
+        "I need this resolved today. It's urgent for my business.",
+        "I see. That makes sense now. Thank you for explaining.",
+        "I don't understand why this keeps happening every month.",
+        "Perfect! That solves my problem completely."
+    ];
+    
+    // Select a response based on current customer satisfaction
+    let responseIndex;
+    if (customerSatisfactionScore < 2) {
+        // More likely to select a negative response if satisfaction is low
+        responseIndex = Math.floor(Math.random() * 5);
+    } else if (customerSatisfactionScore > 4) {
+        // More likely to select a positive response if satisfaction is high
+        responseIndex = 5 + Math.floor(Math.random() * 5);
+    } else {
+        // Random response for neutral satisfaction
+        responseIndex = Math.floor(Math.random() * customerResponses.length);
+    }
+    
+    const response = customerResponses[responseIndex];
+    addMessageToChat("Customer", response, "customer-message");
+    
+    // Analyze the conversation after customer response
+    analyzeConversation();
+}
+
+// Analyze the conversation using Hugging Face API
+async function analyzeConversation() {
+    try {
+        // Get the last few messages to analyze (up to 5)
+        const recentMessages = chatHistory.slice(-5);
+        const conversationText = recentMessages.map(msg => `${msg.role}: ${msg.content}`).join('\n');
+        
+        // Analyze sentiment using a more appropriate model
+        const sentimentScore = await analyzeSentiment(conversationText);
+        
+        // Analyze handling ability
+        const handlingScore = await analyzeHandlingAbility(conversationText);
+        
+        // Update the scores
+        updateScores(sentimentScore, handlingScore);
+        
+    } catch (error) {
+        console.error("Error analyzing conversation:", error);
+    }
+}
+
+// Analyze sentiment using Hugging Face API
+async function analyzeSentiment(text) {
+    try {
+        // Using a model specifically fine-tuned for customer service sentiment
+        const response = await fetch("https://api-inference.huggingface.co/models/Kaludi/Reviews-Sentiment-Analysis", {
+            method: "POST",
+            headers: {
+                "Authorization": "Bearer hf_FKLMEjGKCJvdSrXTtmwCLlGBdRJJfXXXXX", // Replace with your actual API key
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({ inputs: text })
+        });
+        
+        if (!response.ok) {
+            throw new Error(`API request failed with status ${response.status}`);
+        }
+        
+        const result = await response.json();
+        
+        // Process the sentiment results
+        // This model returns an array of objects with label and score
+        let positiveScore = 0;
+        let negativeScore = 0;
+        
+        // Find the positive and negative scores
+        for (const item of result) {
+            if (item.label === "POSITIVE") {
+                positiveScore = item.score;
+            } else if (item.label === "NEGATIVE") {
+                negativeScore = item.score;
+            }
+        }
+        
+        // Calculate a sentiment score on a scale of 1-5
+        // 1 = very negative, 5 = very positive
+        const normalizedScore = 1 + (positiveScore * 4);
+        return normalizedScore;
+        
+    } catch (error) {
+        console.error("Error in sentiment analysis:", error);
+        return 3; // Return neutral score in case of error
+    }
+}
+
+// Analyze handling ability using Hugging Face API
+async function analyzeHandlingAbility(text) {
+    try {
+        // Create a prompt that evaluates customer service quality
+        const prompt = `
+        Analyze the following customer service conversation and rate the employee's handling ability on a scale of 1-5, where:
+        1 = Very poor handling (unprofessional, unhelpful)
+        2 = Poor handling (lacking empathy or solutions)
+        3 = Adequate handling (professional but basic)
+        4 = Good handling (professional, helpful, empathetic)
+        5 = Excellent handling (exceptional service, proactive solutions)
+        
+        Conversation:
+        ${text}
+        
+        Rating (just the number 1-5):
+        `;
+        
+        const response = await fetch("https://api-inference.huggingface.co/models/google/gemma-2-2b-it", {
+            method: "POST",
+            headers: {
+                "Authorization": "Bearer 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", // Replace with your actual API key
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({ 
+                inputs: prompt,
+                parameters: {
+                    max_new_tokens: 10,
+                    return_full_text: false
+                }
+            })
+        });
+        
+        if (!response.ok) {
+            throw new Error(`API request failed with status ${response.status}`);
+        }
+        
+        const result = await response.json();
+        const responseText = result[0].generated_text.trim();
+        
+        // Extract the rating number from the response
+        const ratingMatch = responseText.match(/[1-5]/);
+        if (ratingMatch) {
+            return parseInt(ratingMatch[0]);
+        } else {
+            // Default to middle rating if no clear number is found
+            return 3;
+        }
+        
+    } catch (error) {
+        console.error("Error in handling ability analysis:", error);
+        return 3; // Return neutral score in case of error
+    }
+}
+
+// Update the scores and UI
+function updateScores(sentimentScore, handlingScore) {
+    // Update the global scores with some smoothing to prevent wild fluctuations
+    customerSatisfactionScore = (customerSatisfactionScore * 0.5) + (sentimentScore * 0.5);
+    handlingAbilityScore = (handlingAbilityScore * 0.7) + (handlingScore * 0.3);
+    overallScore = (customerSatisfactionScore + handlingAbilityScore) / 2;
+    
+    // Update the progress bars
+    updateProgressBar('customer-satisfaction-bar', customerSatisfactionScore);
+    updateProgressBar('handling-ability-bar', handlingAbilityScore);
+    updateProgressBar('overall-score-bar', overallScore);
+    
+    // Update the score text
+    document.getElementById('customer-satisfaction-score').textContent = customerSatisfactionScore.toFixed(1);
+    document.getElementById('handling-ability-score').textContent = handlingAbilityScore.toFixed(1);
+    document.getElementById('overall-score').textContent = overallScore.toFixed(1);
+    
+    // Update incentive percentage (example: 70% of overall score)
+    const incentivePercentage = Math.round(overallScore * 14);
+    document.getElementById('incentive-percentage').textContent = incentivePercentage + '%';
+    
+    // Update color coding based on scores
+    updateColorCoding();
+}
+
+// Update a progress bar
+function updateProgressBar(id, score) {
+    const progressBar = document.getElementById(id);
+    const percentage = (score / 5) * 100;
+    progressBar.style.width = percentage + '%';
+    
+    // Update color based on score
+    if (score < 2) {
+        progressBar.style.backgroundColor = '#e74c3c'; // Red for low scores
+    } else if (score < 3.5) {
+        progressBar.style.backgroundColor = '#f39c12'; // Orange for medium scores
+    } else {
+        progressBar.style.backgroundColor = '#2ecc71'; // Green for high scores
+    }
+}
+
+// Update color coding for scores
+function updateColorCoding() {
+    const elements = [
+        { id: 'customer-satisfaction-score', score: customerSatisfactionScore },
+        { id: 'handling-ability-score', score: handlingAbilityScore },
+        { id: 'overall-score', score: overallScore }
+    ];
+    
+    elements.forEach(element => {
+        const el = document.getElementById(element.id);
+        if (element.score < 2) {
+            el.style.color = '#e74c3c'; // Red for low scores
+        } else if (element.score < 3.5) {
+            el.style.color = '#f39c12'; // Orange for medium scores
+        } else {
+            el.style.color = '#2ecc71'; // Green for high scores
+        }
+    });
+}
+    </script>
+</body>
+</html>
