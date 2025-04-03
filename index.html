@@ -547,6 +547,52 @@ function updateColorCoding() {
         }
     });
 }
+        	
+	    // Function to show the pop-up reminder
+    function showReminderPopup() {
+        const popup = document.createElement("div");
+        popup.style.position = "fixed";
+        popup.style.top = "50%";
+        popup.style.left = "50%";
+        popup.style.transform = "translate(-50%, -50%)";
+        popup.style.background = "white";
+        popup.style.padding = "20px";
+        popup.style.borderRadius = "10px";
+        popup.style.boxShadow = "0 4px 6px rgba(0, 0, 0, 0.1)";
+        popup.style.zIndex = "1000";
+        popup.style.textAlign = "center";
+
+        const message = document.createElement("p");
+        message.textContent = "We hope you are enjoying helping out our customer. It's time to relax and reflect on yourself and your peers. We want our work to be a part of your life and not the other way around.";
+        message.style.marginBottom = "15px";
+
+        const closeButton = document.createElement("button");
+        closeButton.textContent = "Go to Dashboard";
+        closeButton.style.padding = "10px 15px";
+        closeButton.style.border = "none";
+        closeButton.style.background = "#3498db";
+        closeButton.style.color = "white";
+        closeButton.style.borderRadius = "5px";
+        closeButton.style.cursor = "pointer";
+        closeButton.onclick = function () {
+            window.location.href = "https://aryanv30.github.io/MHCProjectPart2/";;
+        };
+
+        popup.appendChild(message);
+        popup.appendChild(closeButton);
+        document.body.appendChild(popup);
+    }
+
+    // Show reminder pop-up every 30 Seconds
+    setInterval(showReminderPopup, 30000);
+
+    // Add the button to the performance panel
+    document.addEventListener('DOMContentLoaded', function () {
+        const performancePanel = document.querySelector(".performance-panel");
+        if (performancePanel) {
+            performancePanel.appendChild(dashboardButton);
+        }
+    });
     </script>
 </body>
 </html>
